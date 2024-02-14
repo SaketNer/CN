@@ -1,4 +1,4 @@
-# Important Notes:
+# Important Notes: (Change name to LAB-3-Echo-Server)
 - This lab will be evaluated automatically. So, please ensure you follow instructions to the dot.
 - Do not include unnecessary printf statements. Only print the strings mentioned in question. 
 - Any strings which are required to be sent by the client or server must be **exactly as specified**. (This includes the number of bytes that are being sent)
