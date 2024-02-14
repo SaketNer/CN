@@ -54,11 +54,9 @@ def test_server_greater_than_or_equal_to_5_characters():
     client_socket.sendall(message.encode())
     data = client_socket.recv(1024).decode()
     if data != message:
-       #print(data)
         print_failed("test_server_greater_than_or_equal_to_5_characters - TEST CASE FAILED")
         return 0
     else:
-        #print(data)
         print_passed("test_server_greater_than_or_equal_to_5_characters - TEST CASE PASSED")
         return 1
     
@@ -69,7 +67,6 @@ def test_server_less_than_5_characters():
     data = client_socket.recv(1024).decode()
     expected = "Error: Message length must be more than 5 characters"
     if data != expected:
-        print(data)
         print_failed("test_server_less_than_5_characters - TEST CASE FAILED")
         return 0
     else:
