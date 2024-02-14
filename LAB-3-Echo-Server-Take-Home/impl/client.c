@@ -37,6 +37,7 @@ int create_connection(char* addr, int port) {
 }
 
 void send_data(int socket_id) {
+	memset(msg, 0, 1024);
 	fgets(msg, 1024, stdin);
 	if(strcmp(msg,"EXIT\n")==0 || strcmp(msg, "EXIT") == 0){
 		printf("Client exited successfully");
@@ -54,12 +55,13 @@ void send_data(int socket_id) {
 // Receive input from the server
 void recv_data(int socket_id) {
 	int recv_count;
-	
+	memset(reply, 0, 1024);
 	if((recv_count = recv(socket_id, reply, 1024, 0)) == -1){
             //perror("recv");
 			close(socket_id);
             exit(1);
     }
+	//printf("Server: %s\n", reply);
 }
 
 int main(int argc, char *argv[])

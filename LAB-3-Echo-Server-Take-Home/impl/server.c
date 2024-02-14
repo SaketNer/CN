@@ -73,7 +73,7 @@ int client_connect(int socket_id) {
 	//inet_ntop converts the networkaddresses from binary to text form
 	//is not being used in the code
 	if(inet_ntop(client_addrinfo.sin_family, &client_addrinfo.sin_addr, client_IP, sizeof(client_IP)) <= 0){
-        printf("\nAddress Conversion Error\n");
+        //printf("\nAddress Conversion Error\n");
         close(socket_id);
         close(new_server_sockfd);
         exit(1);
@@ -103,15 +103,19 @@ void echo_input(int socket_id) {
 		// 6. SEND
 		int i;
 		for (i = 0; msg[i] != '\0'; ++i);
-		if(strlen(msg)<5){
+		//printf("recv_count: %d ,i : %d \n", strlen(msg),i);
+		//if(strlen(msg)<5){
+		
+		if(strlen(msg)<=5){
 			strcpy(reply, "Error: Message length must be more than 5 characters");
 		}else{
 			strcpy(reply, msg);
 		}
+		//printf("sending : %s\n", reply);
 
 		// 6. SEND
 		int send_count;
-		if(send_count = send(socket_id, reply, strlen(reply), 0) == -1){
+		if((send_count = send(socket_id, reply, strlen(reply), 0)) == -1){
 			perror("send");
 			close(socket_id);
 			//close(new_server_sockfd);
