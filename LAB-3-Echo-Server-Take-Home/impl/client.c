@@ -29,7 +29,7 @@ int create_connection(char* addr, int port) {
     }
 
 	if(connect(client_sockfd, (struct sockaddr*)&server_addrinfo, sizeof(server_addrinfo)) == -1){ // client connects if server port has started listen()ing and queue is non-full; however server connects to client only when it accept()s
-        perror("Could not find server");
+        printf("Could not find server");
         close(client_sockfd);
         exit(1);
     }
