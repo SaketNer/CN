@@ -38,13 +38,15 @@ int create_connection(char* addr, int port) {
 
 void send_data(int socket_id) {
 	fgets(msg, 1024, stdin);
-	if(strcmp(msg,"EXIT\n")==0){
+	if(strcmp(msg,"EXIT\n")==0 || strcmp(msg, "EXIT") == 0){
 		printf("Client exited successfully");
+		close(socket_id);
 		exit(1);
 	}
 	int send_count = send(socket_id, msg, strlen(msg), 0);
 	if(send_count==-1){
 		//printf("Message not sent\n");
+		close(socket_id);
 		exit(1);
 	}
 }
@@ -55,6 +57,7 @@ void recv_data(int socket_id) {
 	
 	if((recv_count = recv(socket_id, reply, 1024, 0)) == -1){
             //perror("recv");
+			close(socket_id);
             exit(1);
     }
 }
@@ -71,7 +74,7 @@ int main(int argc, char *argv[])
 	// extract the address and port from the command line arguments
 	char addr[INET6_ADDRSTRLEN];
 	strcpy(addr, argv[1]);
-	int port = atoi(argv[2]);
+	unsigned int port = atoi(argv[2]);
 
 	int socket_id = create_connection(addr, port);
 

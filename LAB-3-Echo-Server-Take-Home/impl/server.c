@@ -16,17 +16,25 @@ int create_connection(char* addr, int port) {
 	int server_sockfd;
 	struct sockaddr_in server_addrinfo;
 	
+	//socket
 	if((server_sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1){
         perror("server: socket");
         exit(1);
     }
 	
+	int yes = 1;
+	if(setsockopt(server_sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1){
+        perror("setsockopt");
+        close(server_sockfd);
+        exit(1);
+    }
+
 	server_addrinfo.sin_family = AF_INET;
     server_addrinfo.sin_port = htons(port);
     server_addrinfo.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	if (inet_pton(AF_INET, addr, &server_addrinfo.sin_addr) <= 0) {
-        printf("\nInvalid address/ Address not supported \n");
+        //printf("\nInvalid address/ Address not supported \n");
         close(server_sockfd);
         exit(1);
     }
@@ -63,6 +71,7 @@ int client_connect(int socket_id) {
     unsigned int client_port;
 
 	//inet_ntop converts the networkaddresses from binary to text form
+	//is not being used in the code
 	if(inet_ntop(client_addrinfo.sin_family, &client_addrinfo.sin_addr, client_IP, sizeof(client_IP)) <= 0){
         printf("\nAddress Conversion Error\n");
         close(socket_id);
@@ -94,14 +103,15 @@ void echo_input(int socket_id) {
 		// 6. SEND
 		int i;
 		for (i = 0; msg[i] != '\0'; ++i);
-		if(i<5){
+		if(strlen(msg)<5){
 			strcpy(reply, "Error: Message length must be more than 5 characters");
 		}else{
 			strcpy(reply, msg);
 		}
 
 		// 6. SEND
-		if(send(socket_id, reply, strlen(reply), 0) == -1){
+		int send_count;
+		if(send_count = send(socket_id, reply, strlen(reply), 0) == -1){
 			perror("send");
 			close(socket_id);
 			//close(new_server_sockfd);
