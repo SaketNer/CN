@@ -55,14 +55,17 @@ void send_data(int socket_id) {
 	
     if(strcmp(reply, "NAME\n") == 0 ||strcmp(reply, "NAME") == 0){
         printf("INITIALIZING......\n");
+        fflush(stdout);
         strcpy(msg, name);
     }
     if(strcmp(reply, "POLL\n") == 0 || strcmp(reply, "POLL") == 0){
         printf("ENTER CMD: ");
+        fflush(stdout);
         fgets(msg, 1024, stdin);
         fflush(stdin);
         if(strcmp(msg,"EXIT\n")==0||strcmp(msg,"EXIT")==0){
             printf("CLIENT TERMINATED: EXITING......\n");
+            fflush(stdout);
         }else if(strcmp(msg, "NOOP") == 0||strcmp(msg, "NOOP\n") == 0){
 
         }
@@ -114,7 +117,9 @@ void send_data(int socket_id) {
         while(token!=NULL){
             cnt++;
             printf("%d. %s\n",cnt,token);
+            fflush(stdout); 
             token = strtok(NULL, ":");
+            
         }
         /*char temp[1024];
         memset(temp, 0, 1024);

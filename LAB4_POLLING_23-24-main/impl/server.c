@@ -226,6 +226,7 @@ void server_logic(){
 
     }
     printf("SERVER TERMINATED: EXITING......");
+    fflush(stdout);
     
 }
 
