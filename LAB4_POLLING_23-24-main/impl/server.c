@@ -163,8 +163,10 @@ void server_logic(){
                 //close(new_server_sockfd);
                 exit(1);
             }
-
-            if(strcmp(reply,"EXIT\n")==0||strcmp(reply,"EXIT")==0){
+            if(strcmp(reply,"NOOP\n")==0||strcmp(reply,"NOOP")==0){
+                
+            }
+            else if(strcmp(reply,"EXIT\n")==0||strcmp(reply,"EXIT")==0){
                 //printf("Client %s is active\n",name[i]);
                 clientno--;
                 client_id[i] = -1;
