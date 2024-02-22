@@ -48,8 +48,8 @@ def client_setup(host, port):
             data="NAME\n"
             client_sockets[i].sendall(data.encode())
             name = client_sockets[i].recv(1024).decode().strip("\x00")
-
             if name != names[i] + "\n":
+                print(name)
                 print_failed(f"client{i+1}_status: FAILED")
                 raise ValueError(repr(names[i])+ " " + repr(name))
             print_passed(f"client{i+1}_status: SUCCESS")
@@ -80,6 +80,7 @@ def test_cmds():
     score = 0.000
     try:
         while loc < len(list_cmd):
+            print(loc, list_cmd[loc])
             data = "POLL\n"
             client_sockets[token].sendall(data.encode())
             processes[token].stdin.write(list_cmd[loc] + "\n")
@@ -88,17 +89,23 @@ def test_cmds():
             if out == "NOOP\n":
                 if loc in noop_l:
                     score += .11111
+                    #print(f"here5 {loc}")
             elif out == "EXIT\n":
                 try:
                     output, _ = processes[token].communicate(timeout=2)
                     data = output.strip()
+                    #print("jere")
                     # print(repr(data))
                 except subprocess.TimeoutExpired:
                     processes[token].kill()
-                    print_failed(f"test_cmds - {round(score, 2)}/{total_marks}")
+                    print_failed(f"test_cmds2 - {round(score, 2)}/{total_marks}")
+                    print("TimeoutExpired")
                     return score
                 # print(repr(data))
+                
                 if data != exit_ans[token]:
+                    print(data)
+                    print(token)
                     raise ValueError()
             
                 client_sockets[token].close()
@@ -117,6 +124,7 @@ def test_cmds():
                 # print(connected_clients)
                 if loc in exit_l:
                     score += 0.333333
+                    #print(f"here4 {loc}")
         
             elif out == "LIST\n":
                 ans = ""
@@ -127,12 +135,18 @@ def test_cmds():
 
                 if loc in list_l:
                     score += .1111111
+                    #print(f"here3 {loc}")
             elif out[:5] == "MESG:":
                 if loc in mesg_l and out == list_cmd[loc] + "\n":
                     score += .1111111
+                    #print(f"here2 {loc}")
             else:
                 if loc in invalid_l:
                     score += .1111111
+                    #print_failed(f"here0 {loc}")
+                #
+                    
+                    #print_failed(f"here1 {loc}")
             loc += 1
             if connected_clients:
                 token = (token + 1)%connected_clients
@@ -142,11 +156,12 @@ def test_cmds():
         if round(score, 2) == total_marks:
             print_passed(f"test_cmds - {round(score, 2)}/{total_marks}")
         else:
-            print_failed(f"test_cmds - {round(score, 2)}/{total_marks}")
+            print_failed(f"test_cmds1 - {round(score, 2)}/{total_marks}")
         
         return score
     except Exception as e:
-        print_failed(f"test_cmds - {round(score, 2)}/{total_marks}")
+        print(e)
+        print_failed(f"test_cmds3 - {round(score, 2)}/{total_marks}")
         return score
     
 
