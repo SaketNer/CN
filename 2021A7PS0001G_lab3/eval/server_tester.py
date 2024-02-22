@@ -3,9 +3,10 @@ import subprocess
 import time
 import os
 import inspect
+import random
 
 host = '127.0.0.1'
-port = 2021
+port = random.randint(10000, 20000)
 client_socket = None
 
 marks = 0
@@ -33,63 +34,83 @@ def init_client():
     print_passed("init_client - TEST CASE PASSED")
     return 1
 
-def test_server_multiple_echo():
-    check = 0
-    for i in range(2):
-        message = "test234"
-        client_socket.sendall(message.encode())
-        data = client_socket.recv(1024).decode()
-        if data == message:
-            check += 1
-        
-    if check != 2:
-        print_failed("test_server_multiple_echo - TEST CASE FAILED")
-        return 0
-    else:
-        print_passed("test_server_multiple_echo - TEST CASE PASSED")
-        return 0.5
-    
-def test_server_greater_than_or_equal_to_5_characters():
-    message = "test123"
+
+def test_case_1():
+    message = "ECHO:TESTCASE1:4"
     client_socket.sendall(message.encode())
     data = client_socket.recv(1024).decode()
-    if data != message:
-        print_failed("test_server_greater_than_or_equal_to_5_characters - TEST CASE FAILED")
-        return 0
-    else:
-        print_passed("test_server_greater_than_or_equal_to_5_characters - TEST CASE PASSED")
-        return 1
-    
-    
-def test_server_less_than_5_characters():
-    message = "test"
-    client_socket.sendall(message.encode())
-    data = client_socket.recv(1024).decode()
-    expected = "Error: Message length must be more than 5 characters"
+    expected = "OHCE:TEST"
     if data != expected:
-        print_failed("test_server_less_than_5_characters - TEST CASE FAILED")
+        print_failed("test_case_1 - TEST CASE FAILED")
         return 0
     else:
-        print_passed("test_server_less_than_5_characters - TEST CASE PASSED")
-        return 0.5
+        print_passed("test_case_1 - TEST CASE PASSED")
+        return 2
+
+def test_case_2():
+    message = "ECHO:TESTCASE2:-5"
+    client_socket.sendall(message.encode())
+    data = client_socket.recv(1024).decode()
+    expected = "Error: Negative number of bytes"
+    if data != expected:
+        print_failed("test_case_2 - TEST CASE FAILED")
+        return 0
+    else:
+        print_passed("test_case_2 - TEST CASE PASSED")
+        return 1
+
+def test_case_3():
+    message = "ECHO:TESTCASE3"
+    client_socket.sendall(message.encode())
+    data = client_socket.recv(1024).decode()
+    expected = "OHCE:TESTC"
+    if data != expected:
+        print_failed("test_case_3 - TEST CASE FAILED")
+        return 0
+    else:
+        print_passed("test_case_3 - TEST CASE PASSED")
+        return 1
+
+def test_case_4():
+    message = "ECHO:TESTCASE4:20"
+    client_socket.sendall(message.encode())
+    data = client_socket.recv(1024).decode()
+    expected = "OHCE:TESTCASE4 (9 bytes sent)"
+    if data != expected:
+        print_failed("test_case_4 - TEST CASE FAILED")
+        return 0
+    else:
+        print_passed("test_case_4 - TEST CASE PASSED")
+        return 2
+
+
+def test_case_5():
+    message = "TESTCASE5"
+    client_socket.sendall(message.encode())
+    data = client_socket.recv(1024).decode()
+    expected = "Invalid command: Unable to echo!"
+    if data != expected:
+        print_failed("test_case_5 - TEST CASE FAILED")
+        return 0
+    else:
+        print_passed("test_case_5 - TEST CASE PASSED")
+        return 1
 
 def eval():
     global marks
-    marks += init_client()
-    marks += test_server_multiple_echo()
-    marks += test_server_greater_than_or_equal_to_5_characters()
-    marks += test_server_less_than_5_characters()
+    init_client()
+    marks += test_case_1()
+    marks += test_case_2()
+    marks += test_case_3()
+    marks += test_case_4()
+    marks += test_case_5()
 
     print("Marks: ", marks)
     return marks
 
 if __name__ == "__main__":
-    current_script_path = inspect.getfile(inspect.currentframe())
-    directory = os.path.dirname(current_script_path)
-    os.chdir(directory)
     try:
         eval()
     except:
         print_failed("Script crashed while Testing, Test Case Failed")
         print("Marks: ", marks)
-
