@@ -22,7 +22,7 @@ FILE* ptr;
 char msg[1024];
 char reply[1024];
 
-#define no_of_clients 2
+#define no_of_clients 3
 //int no_of_clients = 3;
 int client_id[no_of_clients];
 char name[no_of_clients][1024];
@@ -223,6 +223,7 @@ void server_logic(){
 
 
     }
+    printf("SERVER TERMINATED: EXITING......");
     
 }
 

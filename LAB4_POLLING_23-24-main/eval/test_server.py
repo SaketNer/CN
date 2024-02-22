@@ -118,7 +118,6 @@ def server_msg():
         # print(repr(output))
         out = 'Katara: CREATE FILE\nINVALID CMD\nINVALID CMD\nAang: DELETE FILE\nSERVER TERMINATED: EXITING......'
     except subprocess.TimeoutExpired:
-        print("TIMEOUT: TERMINATING SERVER")
         server_p.kill()
     print(repr(output.strip()))
     if output.strip() == out:
