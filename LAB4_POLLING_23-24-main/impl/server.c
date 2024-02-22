@@ -17,7 +17,7 @@ port = 2021
 #include <stdlib.h> 
 
 // File Pointer declared 
-//FILE* ptr; 
+FILE* ptr; 
 
 char msg[1024];
 char reply[1024];
@@ -134,7 +134,7 @@ void get_name(){
 
 void server_logic(){
     while (clientno > 0 )
-    {   printf("Polling\n");
+    {   //printf("Polling\n");
         for(int i =0; i < no_of_clients; i++){
             if(client_id[i] == -1){
                 continue;
@@ -169,7 +169,7 @@ void server_logic(){
                 clientno--;
                 client_id[i] = -1;
             }
-            if(strcmp(reply,"LIST\n")==0||strcmp(reply,"LIST")==0){
+            else if(strcmp(reply,"LIST\n")==0||strcmp(reply,"LIST")==0){
                 //printf("Client %s is active\n",name[i]);
                 memset(msg, 0, 1024);
                 for(int j = 0; j < no_of_clients; j++){
@@ -194,18 +194,28 @@ void server_logic(){
                 //fflush(ptr);
             }
 
-            if(strncmp(reply,"MESG",4)==0){
+            else if(strncmp(reply,"MESG",4)==0){
                 memset(msg, 0, 1024);
                 //strcpy(msg, "INVALID CMD\n");
                 char temp[1024];
                 strcpy(temp,name[i]);
-                strcat(msg,name[i]);
+                temp[strcspn(temp, "\n")] = 0;
+                strcat(msg,temp);
                 char str3[] = ":";
                 strcat(msg, str3);
                 char* token = strtok(reply, ":");
                 token = strtok(NULL, ":");
                 strcat(msg,token);
-                printf("%s\n",msg);
+                printf("%s",msg);
+                fprintf( ptr,"%s",msg);
+                fflush(ptr);
+                fflush(stdout);
+            }
+            else{
+                printf("INVALID CMD\n");
+                fprintf( ptr,"INVALID CMD\n");
+                fflush(ptr);
+                fflush(stdout);
             }
             
 
@@ -223,7 +233,7 @@ int main(int argc, char *argv[])
 		printf("Use 2 cli arguments\n");
 		return -1;
 	}
-    //ptr = fopen("./Hello.txt", "w"); 
+    ptr = fopen("./Hello.txt", "w"); 
     
     
 	
@@ -241,6 +251,6 @@ int main(int argc, char *argv[])
     get_name();
 	server_logic();
     close(socket_id);
-    //fclose(ptr);
+    fclose(ptr);
     return 0;    
 }

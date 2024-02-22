@@ -1,15 +1,3 @@
-polling 0
-polling 1
-sending: Aang:Sokka:Katara
-polling 2
-polling 0
-polling 1
-polling 2
-sending: Aang:Katara
-polling 0
-polling 2
-polling 0
-polling 0
-polling 0
-sending: Aang
-polling 0
+INVALID CMD
+Aang: CREATE FILE
+INVALID CMD
