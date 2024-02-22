@@ -80,7 +80,7 @@ def test_cmds():
     score = 0.000
     try:
         while loc < len(list_cmd):
-            print(loc, list_cmd[loc])
+            #print(loc, list_cmd[loc])
             data = "POLL\n"
             client_sockets[token].sendall(data.encode())
             processes[token].stdin.write(list_cmd[loc] + "\n")

@@ -108,7 +108,15 @@ void send_data(int socket_id) {
     }
     if(strcmp(msg, "LIST\n") == 0||strcmp(msg, "LIST") == 0){
         recv_data(socket_id);
-        char temp[1024];
+        reply[strcspn(reply, "\n")] = 0;
+        char* token = strtok(reply, ":");
+        int cnt =0;
+        while(token!=NULL){
+            cnt++;
+            printf("%d. %s\n",cnt,token);
+            token = strtok(NULL, ":");
+        }
+        /*char temp[1024];
         memset(temp, 0, 1024);
         int currep = 0;
         int curtemp = 0;
@@ -130,7 +138,7 @@ void send_data(int socket_id) {
         }
         printf("%d. %s\n",cnt,temp);
         fflush(stdout);
-        memset(temp, 0, 1024);
+        memset(temp, 0, 1024);*/
     }
 }
 
