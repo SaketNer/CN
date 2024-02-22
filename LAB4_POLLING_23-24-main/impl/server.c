@@ -17,7 +17,7 @@ port = 2021
 #include <stdlib.h> 
 
 // File Pointer declared 
-FILE* ptr; 
+//FILE* ptr; 
 
 char msg[1024];
 char reply[1024];
@@ -164,7 +164,7 @@ void server_logic(){
                 exit(1);
             }
             if(strcmp(reply,"NOOP\n")==0||strcmp(reply,"NOOP")==0){
-                
+
             }
             else if(strcmp(reply,"EXIT\n")==0||strcmp(reply,"EXIT")==0){
                 //printf("Client %s is active\n",name[i]);
@@ -209,14 +209,14 @@ void server_logic(){
                 token = strtok(NULL, ":");
                 strcat(msg,token);
                 printf("%s",msg);
-                fprintf( ptr,"%s",msg);
-                fflush(ptr);
+                //fprintf( ptr,"%s",msg);
+                //fflush(ptr);
                 fflush(stdout);
             }
             else{
                 printf("INVALID CMD\n");
-                fprintf( ptr,"INVALID CMD\n");
-                fflush(ptr);
+                //fprintf( ptr,"INVALID CMD\n");
+                //fflush(ptr);
                 fflush(stdout);
             }
             
@@ -236,7 +236,7 @@ int main(int argc, char *argv[])
 		printf("Use 2 cli arguments\n");
 		return -1;
 	}
-    ptr = fopen("./Hello.txt", "w"); 
+    //ptr = fopen("./Hello.txt", "w"); 
     
     
 	
@@ -254,6 +254,6 @@ int main(int argc, char *argv[])
     get_name();
 	server_logic();
     close(socket_id);
-    fclose(ptr);
+    //fclose(ptr);
     return 0;    
 }
