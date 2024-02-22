@@ -13,9 +13,21 @@ port = 2021
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <stdio.h> 
+#include <stdlib.h> 
+
+// File Pointer declared 
+//FILE* ptr; 
 
 char msg[1024];
 char reply[1024];
+
+#define no_of_clients 2
+//int no_of_clients = 3;
+int client_id[no_of_clients];
+char name[no_of_clients][1024];
+int clientno = no_of_clients;
+
 
 // create connction
 int create_connection(char* addr, int port) {
@@ -92,13 +104,128 @@ int client_connect(int socket_id) {
 
 }
 
+void get_name(){
+    memset(msg, 0, 1024);
+    memset(reply, 0, 1024);
+    int recv_count;
+    for(int i =0; i <no_of_clients;i++){
+        strcpy(msg,"NAME\n");
+
+        // 6. SEND
+		int send_count;
+		if((send_count = send(client_id[i], msg, strlen(msg), 0)) == -1){
+			perror("send");
+			close(client_id[i]);
+			//close(new_server_sockfd);
+			exit(1);
+		}
+
+        //RECEIVE
+        if((recv_count = recv(client_id[i], reply, 1024, 0)) == -1){
+            perror("recv");
+            close(client_id[i]);
+            //close(new_server_sockfd);
+            exit(1);
+        }
+        strcpy(name[i],reply);
+    }
+	   
+}
+
+void server_logic(){
+    while (clientno > 0 )
+    {   printf("Polling\n");
+        for(int i =0; i < no_of_clients; i++){
+            if(client_id[i] == -1){
+                continue;
+            }
+            //fprintf( ptr,"polling %d\n",i);
+            //fflush(ptr);
+            memset(msg, 0, 1024);
+            memset(reply, 0, 1024);
+
+            strcpy(msg,"POLL\n");
+
+            // 6. SEND
+            int send_count;
+            if((send_count = send(client_id[i], msg, strlen(msg), 0)) == -1){
+                perror("send");
+                close(client_id[i]);
+                //close(new_server_sockfd);
+                exit(1);
+            }
+
+            //RECEIVE
+            int recv_count;
+            if((recv_count = recv(client_id[i], reply, 1024, 0)) == -1){
+                perror("recv");
+                close(client_id[i]);
+                //close(new_server_sockfd);
+                exit(1);
+            }
+
+            if(strcmp(reply,"EXIT\n")==0||strcmp(reply,"EXIT")==0){
+                //printf("Client %s is active\n",name[i]);
+                clientno--;
+                client_id[i] = -1;
+            }
+            if(strcmp(reply,"LIST\n")==0||strcmp(reply,"LIST")==0){
+                //printf("Client %s is active\n",name[i]);
+                memset(msg, 0, 1024);
+                for(int j = 0; j < no_of_clients; j++){
+                    if(client_id[j] != -1){
+                        //sprintf(msg, "%s%s:", msg, name[j]);
+                        char temp[1024];
+                        strcpy(temp, name[j]);
+                        temp[strcspn(temp, "\n")] = 0;
+                        strcat(msg,temp );
+                        char str3[] = ":";
+                        strcat(msg, str3);
+                    }
+                }
+                msg[strlen(msg)-1] = '\0';
+                if((send_count = send(client_id[i], msg, strlen(msg), 0)) == -1){
+                    perror("send");
+                    close(client_id[i]);
+                    //close(new_server_sockfd);
+                    exit(1);
+                }
+                //fprintf( ptr,"sending: %s\n",msg);
+                //fflush(ptr);
+            }
+
+            if(strncmp(reply,"MESG",4)==0){
+                memset(msg, 0, 1024);
+                //strcpy(msg, "INVALID CMD\n");
+                char temp[1024];
+                strcpy(temp,name[i]);
+                strcat(msg,name[i]);
+                char str3[] = ":";
+                strcat(msg, str3);
+                char* token = strtok(reply, ":");
+                token = strtok(NULL, ":");
+                strcat(msg,token);
+                printf("%s\n",msg);
+            }
+            
+
+        }
+
+
+    }
+    
+}
+
 int main(int argc, char *argv[])
-{
+{   
     if (argc != 3)
 	{
 		printf("Use 2 cli arguments\n");
 		return -1;
 	}
+    //ptr = fopen("./Hello.txt", "w"); 
+    
+    
 	
 	// extract the address and port from the command line arguments
 	// extract the address and port from the command line arguments
@@ -107,8 +234,13 @@ int main(int argc, char *argv[])
 	int port = atoi(argv[2]);
 
 	int socket_id = create_connection(addr, port);
-    int client_id = client_connect(socket_id);
-	echo_input(client_id);
+    for(int i =0; i < no_of_clients; i++){
+        client_id[i] = client_connect(socket_id);
+    }
+    //int client_id = client_connect(socket_id);
+    get_name();
+	server_logic();
     close(socket_id);
+    //fclose(ptr);
     return 0;    
 }
