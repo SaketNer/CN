@@ -53,6 +53,7 @@ int create_connection(char* addr, int port) {
         exit(1);
     }
 	return server_sockfd;
+
 }
 
 // Accept incoming connections
@@ -82,7 +83,7 @@ int client_connect(int socket_id) {
     //printf("Server: Got connection from %s:%u\n", client_IP, client_port);
 
 	return new_server_sockfd;
-    
+
 }
 
 // Echo input from client
@@ -90,7 +91,8 @@ void echo_input(int socket_id) {
 	while(1){
 		memset(msg, 0, 1024);
         memset(reply, 0, 1024);
-		
+		char temp[1024];
+		memset(temp, 0, 1024);
 		// 5. RECEIVE
 		int recv_count;
 		if((recv_count = recv(socket_id, msg, 1024, 0)) == -1){
@@ -101,17 +103,95 @@ void echo_input(int socket_id) {
 		}	
 		
 		// 6. SEND
-		int i;
-		for (i = 0; msg[i] != '\0'; ++i);
+		//int i;
+		//for (i = 0; msg[i] != '\0'; ++i);
 		//printf("recv_count: %d ,i : %d \n", strlen(msg),i);
 		//if(strlen(msg)<5){
+		int numBytes = 5;
+		int tempBytes = 0;
+		if(!(msg[0]=='E' && msg[1]=='C'&& msg[2]=='H'&& msg[3]=='O'&& msg[4]==':')){
+			strcpy(reply, "Invalid command: Unable to echo!");
+		}
+		else{
+			strcpy(reply, "OHCE:");
+			int i;
+			for(i =5 ; i <1023 && msg[i]!='\0';i++){
+				if(msg[i]==':'){
+					//temp[i-5]='\0';
+					break;
+				}
+				temp[i-5]=msg[i];
+			}
+			i++;
+			for(; i <1023 && msg[i]!='\0';i++){
+				if(msg[i]>='0' && msg[i]<='9'){
+					tempBytes= tempBytes*10+(msg[i]-'0');
+					//printf("checking:%d,val :%d\n", msg[i],tempBytes);
+				}
+				else if(msg[i]=='-'){
+					tempBytes=-1;
+					break;
+				}
+				else{
+					break;
+				}
+				
+				
+			}
+			if(tempBytes!=-1){
+				if(tempBytes==0){
+					tempBytes=numBytes;
+				}
+				int j=0;
+				int cnt=0;
+				int total = tempBytes;
+				for(; j<tempBytes;j++){
+					if(temp[j]=='\0'){
+						break;
+					}
+					reply[j+5]=temp[j];
+					cnt++;
+					total--;
+					//printf("TOAL : %d\n",total);
+				}
+				//j++;
+				//printf("HERE1 : %d\n",total);
+				if(total!=0){
+					reply[j+5]=' ';
+					j++;
+					reply[j+5]='(';
+					j++;
+					reply[j+5]=cnt+'0';
+					j++;
+					//char t[20] = [' ','b','y','t','e','s' ,' ','s' ,'e','n','t',')'];
+					char t[20] =" bytes sent)";
+					for(int r = 0;r<=11;r++){
+						reply[j+5+r]=t[r];
+					}
+					//printf("HERE : %d\n",total);
+					reply[j+5+12]='\0';
+				}
+				else{
+					reply[j+7]='\0';
+				}
+				//printf("TOAL FIANL : %d\n",total);
+			}
+			else{
+				strcpy(reply, "Error: Negative number of bytes");
+			}
+			
+
+			
+		}
 		
-		if(strlen(msg)<5){
+		
+		/*if(strlen(msg)<5){
 			strcpy(reply, "Error: Message length must be more than 5 characters");
 		}else{
 			strcpy(reply, msg);
-		}
+		}*/
 		//printf("sending : %s\n", reply);
+		//printf("TEMP : %s ,BYTES :%d\n", temp,tempBytes);
 
 		// 6. SEND
 		int send_count;
@@ -124,6 +204,7 @@ void echo_input(int socket_id) {
 		//printf("Client messaged: %s\n", msg);
 		//printf("Server echoed: %s\n\n", reply);
 	}
+
 }
 
 int main(int argc, char *argv[])
@@ -135,13 +216,12 @@ int main(int argc, char *argv[])
 	}
 	
 	// extract the address and port from the command line arguments
+	// extract the address and port from the command line arguments
 	char addr[INET6_ADDRSTRLEN];
 	strcpy(addr, argv[1]);
 	int port = atoi(argv[2]);
 
 	int socket_id = create_connection(addr, port);
-	//printf("Server: Waiting for new connections...\n");
-	//fflush(stdout);
     int client_id = client_connect(socket_id);
 	echo_input(client_id);
     close(socket_id);

@@ -10,6 +10,7 @@
 
 char msg[1024];
 char reply[1024];
+FILE* ptr; 
 
 // Create a connection to the server
 int create_connection(char* addr, int port) {
@@ -37,6 +38,7 @@ int create_connection(char* addr, int port) {
 }
 
 void send_data(int socket_id) {
+	
 	memset(msg, 0, 1024);
 	fgets(msg, 1024, stdin);
 	if(strcmp(msg,"EXIT\n")==0 || strcmp(msg, "EXIT") == 0){
@@ -50,6 +52,12 @@ void send_data(int socket_id) {
 		close(socket_id);
 		exit(1);
 	}
+	FILE* t; 
+	//t = fopen("client_file.txt", "a"); 
+	fprintf( ptr,"CLIENT: %s", msg);
+	fflush(ptr);
+	//fputs(str, fp)
+	//fclose(t);
 }
 
 // Receive input from the server
@@ -62,6 +70,12 @@ void recv_data(int socket_id) {
             exit(1);
     }
 	//printf("Server: %s\n", reply);
+	FILE* t; 
+	//t = fopen("client_file.txt", "a"); 
+	fprintf( ptr,"SERVER: %s\n", reply);
+	fflush(ptr);
+	//fputs(str, fp)
+	//fclose(t);
 }
 
 int main(int argc, char *argv[])
@@ -72,17 +86,22 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 	
-    
+	// extract the address and port from the command line arguments
 	// extract the address and port from the command line arguments
 	char addr[INET6_ADDRSTRLEN];
 	strcpy(addr, argv[1]);
 	unsigned int port = atoi(argv[2]);
-
 	int socket_id = create_connection(addr, port);
+	
+    ptr = fopen("./client_file.txt", "w"); 
+	if(ptr==NULL){
+		printf("ERROR");
+	}
 
 	while (1)
     {
         send_data(socket_id);
         recv_data(socket_id);
     }
+	fclose(ptr);
 }

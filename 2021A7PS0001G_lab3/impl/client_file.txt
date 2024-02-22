@@ -1,0 +1,4 @@
+CLIENT: dgjfidog
+Server: Invalid command: Unable to echo!
+CLIENT: 
+Server: Invalid command: Unable to echo!
