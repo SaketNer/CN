@@ -376,10 +376,15 @@ void * server_logic(void *i){
                 send_data(server_reply,client_fd);
             }
             for(int i =0; i <grps[pos].grp_size;i++){
-                //int pos_temp = find_client_by_fd(grps[pos].user_ids[i]);
-                //if(pos_temp == -1) continue;
-                if(grps[pos].user_ids[i]==client_fd) continue;
-                send_data(grp_msg,grps[pos].user_ids[i]);
+                int pos_temp = find_client_by_fd(grps[pos].user_ids[i]);
+                printf("%d\n",pos_temp);
+                if(pos_temp == -1) continue;
+                sprintf(server_reply, "%s:%s", clients[clientEntry_pos].name,grp_msg);
+                //if(grps[pos].user_ids[i]!=client_fd){
+
+                    send_data(server_reply,grps[pos].user_ids[i]);
+                //}
+                
             }
         }
         else if(strncmp(client_msg, "BCST", 4) == 0){
@@ -388,6 +393,7 @@ void * server_logic(void *i){
             for(int i =0; i <client_count;i++){
                 if(clients[i].client_fd==-1) continue;
                 if(clients[i].client_fd == client_fd) continue;
+                //printf("sending bcst");
                 send_data(brd_msg,clients[i].client_fd);
             }
         }
