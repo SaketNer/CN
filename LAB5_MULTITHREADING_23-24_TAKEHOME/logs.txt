@@ -1,3 +1,4 @@
+phoenixthe4th@phoenixthe4th:~/Desktop/sakcn/CN/LAB5_MULTITHREADING_23-24_TAKEHOME/eval$ ./server_final 
 ../impl/server.c: In function ‘splitString’:
 ../impl/server.c:80:27: warning: assignment to ‘char’ from ‘char *’ makes integer from pointer without a cast [-Wint-conversion]
    80 |         words[*num_words] = strdup(token); // Duplicate each token
@@ -10,8 +11,8 @@
   247 |     int client_fd = (int) i;
       |                     ^
 ../impl/server.c: In function ‘main’:
-../impl/server.c:415:60: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-  415 |             pthread_create(&thread_id, NULL, server_logic, (void *) client_fd);
+../impl/server.c:419:60: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  419 |             pthread_create(&thread_id, NULL, server_logic, (void *) client_fd);
       |                                                            ^
 ../impl/server.c: In function ‘server_logic’:
 ../impl/server.c:266:35: warning: ‘%s’ directive writing up to 1023 bytes into a region of size between 0 and 1023 [-Wformat-overflow=]
@@ -20,11 +21,11 @@
 ../impl/server.c:266:9: note: ‘sprintf’ output between 2 and 2048 bytes into a destination of size 1024
   266 |         sprintf(temp_history, "%s-%s",clients[clientEntry_pos].name, client_msg);
       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../impl/server.c:356:46: warning: ‘%s’ directive writing up to 1023 bytes into a region of size 1018 [-Wformat-overflow=]
-  356 |                 sprintf(server_reply, "GROUP %s NOT FOUND\n", grp_name);
+../impl/server.c:360:46: warning: ‘%s’ directive writing up to 1023 bytes into a region of size 1018 [-Wformat-overflow=]
+  360 |                 sprintf(server_reply, "GROUP %s NOT FOUND\n", grp_name);
       |                                              ^~               ~~~~~~~~
-../impl/server.c:356:17: note: ‘sprintf’ output between 18 and 1041 bytes into a destination of size 1024
-  356 |                 sprintf(server_reply, "GROUP %s NOT FOUND\n", grp_name);
+../impl/server.c:360:17: note: ‘sprintf’ output between 18 and 1041 bytes into a destination of size 1024
+  360 |                 sprintf(server_reply, "GROUP %s NOT FOUND\n", grp_name);
       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 SendingTest: user1
 SendingTest: user2
@@ -34,26 +35,14 @@ SendingTest: user5
 TEST CASES START
 SendingTest: LIST
 
-Server reply (LIST):
-NAME
-
-Exepected reply (LIST):
-user1:user2:user3:user4:user5
-
-LIST test failed!
+LIST test passed!
 SendingTest: MSGC:user2:Hello User2!
 
-Server reply (MSGC):
-NAME
-
-Exepected reply (MSGC):
-user1:Hello User2!
-
-MSGC test1 failed!
+MSGC test1 passed!
 SendingTest: MSGC:user6:Hello User1!
 
+send: Socket operation on non-socket
 Server reply (MSGC):
-user1:Hello User2!
 
 Exepected reply (MSGC):
 USER NOT FOUND
@@ -62,7 +51,6 @@ MSGC test2 failed!
 SendingTest: GRPS:user3,user2,user4:group1
 
 Server reply (GRPS):
-user1:user2:user3:user4:user5
 
 Exepected reply (GRPS):
 GROUP group1 CREATED
@@ -70,47 +58,3 @@ GROUP group1 CREATED
 GRPS test failed!
 SendingTest: GRPS:user3,user2,user6:group1
 
-Caught exception "recv() failed"
-Test Case GRPS Failed
-SendingTest: MCST:group1:Hello Group1!
-
-MCST test1 failed!
-SendingTest: MCST:group2:Hello Group2!
-
-MCST test2 passed!
-SendingTest: BCST:Hello Everyone!
-
-BCST test1 failed!
-SendingTest: HIST
-
-Server reply (HIST):
-user1-LIST
-user2-MSGC:user6:Hello User1!
-user1-MSGC:user2:Hello User2!
-user1-GRPS:user3,user2,user4:group1
-GRPS:user3,user2,user6:group1
-user1-MCST:group1:Hello Group1!
-user1-MCST:group2:Hello Group2!
-user2-BCST:Hello Everyone!
-user1-HIST
-
-Exepected reply (HIST):
-user1-LIST
-user1-MSGC:user2:Hello User2!
-user2-MSGC:user6:Hello User1!
-user1-GRPS:user3,user2,user4:group1
-user1-GRPS:user3,user2,user6:group1
-user1-MCST:group1:Hello Group1!
-user1-MCST:group2:Hello Group2!
-user2-BCST:Hello Everyone!
-user1-HIST
-
-HIST test failed!
-SendingTest: EXIT
-
-SendingTest: LIST
-
-EXIT test passed!
-TEST CASES END
-Marks: 1.5/6
-Logging from your program available at: logs.txt
