@@ -1,39 +1,24 @@
 Client user1 connected
-Client user3 connected
 Client user2 connected
+Client user3 connected
 Client user4 connected
 Client user5 connected
 Client user1: LIST
-Client user2: MSGC:user6:Hello User1!
 data sent
 SENDING: Client user1: user1:user2:user3:user4:user5
 
 Client user1: MSGC:user2:Hello User2!
-USER NOT FOUND
 data sent
 SENDING from user1 to user2: user1:Hello User2!
 
+Client user2: MSGC:user6:Hello User1!
+USER NOT FOUND
 Client user1: GRPS:user3,user2,user4:group1
-GRPS:user3,user2,user6:group1
+making grp
+data sent
+Client user1: GRPS:user3,user2,user6:group1
 making grp
 data sent
 Client user1: MCST:group1:Hello Group1!
 data sent
 data sent
-data sent
-Client user1: MCST:group2:Hello Group2!
-data sent
-Client user2: BCST:Hello Everyone!
-data sent
-data sent
-data sent
-data sent
-data sent
-Client user1: HIST
-data sent
-Client user5: EXIT
-Client user1: LIST
-data sent
-SENDING: Client user1: user1:user2:user3:user4
-
-Client user1: data sent
