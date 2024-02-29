@@ -379,10 +379,10 @@ void * server_logic(void *i){
                 int pos_temp = find_client_by_fd(grps[pos].user_ids[i]);
                 printf("%d\n",pos_temp);
                 if(pos_temp == -1) continue;
-                sprintf(server_reply, "%s:%s", clients[clientEntry_pos].name,grp_msg);
+                sprintf(server_reply, "%s:%s\n", clients[clientEntry_pos].name,grp_msg);
                 //if(grps[pos].user_ids[i]!=client_fd){
 
-                    send_data(server_reply,grps[pos].user_ids[i]);
+                send_data(server_reply,grps[pos].user_ids[i]);
                 //}
                 
             }
