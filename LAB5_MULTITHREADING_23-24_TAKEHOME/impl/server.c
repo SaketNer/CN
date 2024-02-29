@@ -369,15 +369,15 @@ void * server_logic(void *i){
             char command_name[BUFFER_SIZE], grp_name[BUFFER_SIZE], grp_msg[BUFFER_SIZE];
             sscanf(client_msg, "%[^:]:%[^:]:%[^\n]", command_name, grp_name, grp_msg);
             int pos = find_group_by_name(grp_name);
-            if(pos ==-1){
+            if(pos == -1){
                 //printf("here\n");
                 //fflush(stdout);
                 sprintf(server_reply, "GROUP %s NOT FOUND\n", grp_name);
                 send_data(server_reply,client_fd);
             }
             for(int i =0; i <grps[pos].grp_size;i++){
-                int pos = find_client_by_fd(grps[pos].user_ids[i]);
-                if(pos == -1) continue;
+                int pos_temp = find_client_by_fd(grps[pos].user_ids[i]);
+                if(pos_temp == -1) continue;
                 send_data(grp_msg,grps[pos].user_ids[i]);
             }
         }
