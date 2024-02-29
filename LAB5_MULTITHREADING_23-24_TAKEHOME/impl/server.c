@@ -290,7 +290,7 @@ void * server_logic(void *i){
                 //printf("USER NOT FOUND\n");
                 //fflush(stdout);
                 strcat(server_reply, "USER NOT FOUND\n");
-                send_data(server_reply, clients[pos].client_fd);
+                send_data(server_reply, client_fd);
                 continue;
             }
             strcat(server_reply, clients[clientEntry_pos].name);
@@ -347,7 +347,7 @@ void * server_logic(void *i){
             grps[pos].grp_size = temp_grp.grp_size;
             pthread_mutex_unlock(&lock_GrpEntry_list);
             
-            //printf("GROUP %s CREATED\n",group_name);
+            sprintf(server_reply,"GROUP %s CREATED\n",group_name);
             send_data(server_reply,client_fd);
         }
         else if(strncmp(client_msg, "MCST", 4) == 0){
