@@ -28,8 +28,8 @@ int client_id[max_clients];
 char name[max_clients][1024];
 int clientno = max_clients;
 
-
-pthread_t thread_id[1024]; 
+int thread_cnt = 0;
+pthread_t list_thread_id[max_clients*2]; 
 
 int client_count = 0;
 struct clientEntry {
@@ -46,9 +46,11 @@ struct GroupEntry {
 
 struct clientEntry clients[max_clients];
 struct GroupEntry grps[max_clients];
+char history[1024*8];
 
 pthread_mutex_t lock_clientEntry_list; 
 pthread_mutex_t lock_GrpEntry_list; 
+pthread_mutex_t lock_history; 
 
 //helper functions starts
 
@@ -258,6 +260,12 @@ void * server_logic(void *i){
             //close(new_server_sockfd);
             exit(1);
         }
+
+        char temp_history[1024];
+        pthread_mutex_lock(&lock_history); 
+        sprintf(temp_history, "%s-%s",clients[clientEntry_pos].name, client_msg);
+        strcat(history, temp_history);
+        pthread_mutex_unlock(&lock_history);
         
         printf("Client %s: %s", clients[clientEntry_pos].name, client_msg);
         if(strcmp(client_msg,"LIST\n")==0||strcmp(client_msg,"LIST")==0){
@@ -352,6 +360,24 @@ void * server_logic(void *i){
                 send_data(grp_msg,grps[pos].user_ids[i]);
             }
         }
+        else if(strncmp(client_msg, "BCST", 4) == 0){
+            char command_name[BUFFER_SIZE],  brd_msg [BUFFER_SIZE];
+            sscanf(client_msg, "%[^:]:%[^\n]", command_name, brd_msg);
+            for(int i =0; i <client_count;i++){
+                if(clients[i].client_fd==-1) continue;
+                send_data(brd_msg,clients[i].client_fd);
+            }
+        }
+        else if(strcmp(client_msg, "HIST\n") == 0){
+            send_data(history,client_fd);
+        }
+        else if(strcmp(client_msg, "EXIT\n") == 0){
+            clients[clientEntry_pos].client_fd = -1;
+            //close(clients[clientEntry_pos].client_fd);
+        }
+        else{
+            send_data("INVALID COMMAND\n",client_fd);
+        }
         
     }
 }
@@ -384,10 +410,23 @@ int main(int argc, char *argv[])
         if(client_count<=max_clients){
             int client_fd =  client_connect(socket_id);
             pthread_t thread_id; 
+            list_thread_id[thread_cnt]= thread_id;
+            thread_cnt++;
             pthread_create(&thread_id, NULL, server_logic, (void *) client_fd); 
         }
     }
+    for (int t = 0; t < thread_cnt; t++) {
+        pthread_join(list_thread_id[t], NULL);  
+    }
+    //return data from thread
+    /*
+    // int ret = 42;
+    // in thread do pthread_exit(&ret);
 
+    void *thread_result;
+    pthread_join(thread_id, &thread_result);
+    printf("%d\n",*(int*)status);   
+    */
 
     close(socket_id);
     return 0;    
