@@ -71,6 +71,7 @@ void *send_data(int socket_id) {
             exit(1);
         }
         printf("sent: %s\n", msg);
+        fflush(stdout);
     }
 	
 }

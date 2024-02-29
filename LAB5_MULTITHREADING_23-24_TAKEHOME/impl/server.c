@@ -96,6 +96,8 @@ void send_data(char* msg, int client_fd){
 		//close(new_server_sockfd);
         exit(1);
 	}
+    printf("data sent\n");
+    fflush(stdout);
     return;
 }
 
@@ -103,6 +105,16 @@ int find_client_by_name(char* name){
     for (int i = 0; i < max_clients; i++)
     {
         if(strcmp(clients[i].name, name)==0){
+            return i;
+        }
+    }
+    return -1;
+}
+
+int find_group_by_name(char* name){
+    for (int i = 0; i < max_clients; i++)
+    {
+        if(strcmp(grps[i].grp_name, name)==0){
             return i;
         }
     }
@@ -281,6 +293,8 @@ void * server_logic(void *i){
         }
 
         else if(strncmp(client_msg, "GRPS", 4) == 0){
+            printf("making grp\n");
+            fflush(stdout);
             char command_name[BUFFER_SIZE], group_members[BUFFER_SIZE], group_name[BUFFER_SIZE];
             sscanf(client_msg, "%[^:]:%[^:]:%[^\n]", command_name, group_members, group_name);
             struct GroupEntry temp_grp;
@@ -300,14 +314,43 @@ void * server_logic(void *i){
                 }
                 temp_grp.user_ids[temp_grp.grp_size] = clients[pos].client_fd;
                 temp_grp.grp_size++;
+                members = strtok(NULL, ",");
             }
-
+            //printf("here2\n");
+            //fflush(stdout);
+            if(!valid_group) continue;
             pthread_mutex_lock(&lock_GrpEntry_list);
-            strcpy(grps[grp_count].grp_name, temp_grp.grp_name);
-
-
-
-
+            int pos = find_group_by_name(temp_grp.grp_name);
+            if(pos ==-1) {
+                pos = grp_count;
+                grp_count++;
+            }
+            strcpy(grps[pos].grp_name, temp_grp.grp_name);
+            for(int i =0 ; i <max_clients;i++){
+                grps[pos].user_ids[i] = -1;
+            }
+            for(int i =0 ; i <temp_grp.grp_size;i++){
+                grps[pos].user_ids[i] = temp_grp.user_ids[i];
+            }
+            grps[pos].grp_size = temp_grp.grp_size;
+            pthread_mutex_unlock(&lock_GrpEntry_list);
+            
+            //printf("GROUP %s CREATED\n",group_name);
+            send_data(server_reply,client_fd);
+        }
+        else if(strncmp(client_msg, "MCST", 4) == 0){
+            char command_name[BUFFER_SIZE], grp_name[BUFFER_SIZE], grp_msg[BUFFER_SIZE];
+            sscanf(client_msg, "%[^:]:%[^:]:%[^\n]", command_name, grp_name, grp_msg);
+            int pos = find_group_by_name(grp_name);
+            if(pos ==-1){
+                //printf("here\n");
+                //fflush(stdout);
+                sprintf(server_reply, "GROUP %s NOT FOUND\n", grp_name);
+                send_data(server_reply,client_fd);
+            }
+            for(int i =0; i <grps[pos].grp_size;i++){
+                send_data(grp_msg,grps[pos].user_ids[i]);
+            }
         }
         
     }
