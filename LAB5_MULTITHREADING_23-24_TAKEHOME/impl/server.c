@@ -215,13 +215,13 @@ int get_name(int client_fd){
     strcpy(msg,"NAME\n");
 
         // 6. SEND
-	int send_count;
+	/*int send_count;
 	if((send_count = send(client_fd, msg, strlen(msg), 0)) == -1){
 		perror("send");
 		close(client_fd);
 		//close(new_server_sockfd);
         exit(1);
-	}
+	}*/
 
     //RECEIVE
     if((recv_count = recv(client_fd, reply, 1024, 0)) == -1){
