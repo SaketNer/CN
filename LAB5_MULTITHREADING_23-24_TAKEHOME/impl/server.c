@@ -378,6 +378,7 @@ void * server_logic(void *i){
             for(int i =0; i <grps[pos].grp_size;i++){
                 //int pos_temp = find_client_by_fd(grps[pos].user_ids[i]);
                 //if(pos_temp == -1) continue;
+                if(grps[pos].user_ids[i]==client_fd) continue;
                 send_data(grp_msg,grps[pos].user_ids[i]);
             }
         }
