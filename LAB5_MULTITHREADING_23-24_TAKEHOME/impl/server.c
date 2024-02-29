@@ -238,7 +238,7 @@ int get_name(int client_fd){
     pos = client_count;
     client_count++;
     pthread_mutex_unlock(&lock_clientEntry_list);
-    printf("Client %s connected\n", reply);
+    //printf("Client %s connected\n", reply);
     return pos;
 	
 }
@@ -267,7 +267,7 @@ void * server_logic(void *i){
         strcat(history, temp_history);
         pthread_mutex_unlock(&lock_history);
         
-        printf("Client %s: %s", clients[clientEntry_pos].name, client_msg);
+        //printf("Client %s: %s", clients[clientEntry_pos].name, client_msg);
         if(strcmp(client_msg,"LIST\n")==0||strcmp(client_msg,"LIST")==0){
             for (int i = 0; i < max_clients; ++i)
             {
@@ -277,7 +277,7 @@ void * server_logic(void *i){
             }
             server_reply[strlen(server_reply) - 1] = '\n';
             send_data(server_reply, client_fd);
-            printf("SENDING: Client %s: %s\n", clients[clientEntry_pos].name, server_reply);
+            //printf("SENDING: Client %s: %s\n", clients[clientEntry_pos].name, server_reply);
             fflush(stdout);
         }
 
@@ -287,8 +287,10 @@ void * server_logic(void *i){
             sscanf(client_msg, "%[^:]:%[^:]:%[^\n]", msgc, receiver_name, actual_message);
             int pos = find_client_by_name(receiver_name);
             if(pos ==-1){
-                printf("USER NOT FOUND\n");
-                fflush(stdout);
+                //printf("USER NOT FOUND\n");
+                //fflush(stdout);
+                strcat(server_reply, "USER NOT FOUND\n");
+                send_data(server_reply, clients[pos].client_fd);
                 continue;
             }
             strcat(server_reply, clients[clientEntry_pos].name);
@@ -296,13 +298,13 @@ void * server_logic(void *i){
             strcat(server_reply, actual_message);
             server_reply[strlen(server_reply) ] = '\n';
             send_data(server_reply, clients[pos].client_fd);
-            printf("SENDING from %s to %s: %s\n", clients[clientEntry_pos].name,clients[pos].name, server_reply);
+            //printf("SENDING from %s to %s: %s\n", clients[clientEntry_pos].name,clients[pos].name, server_reply);
             fflush(stdout);
         }
 
         else if(strncmp(client_msg, "GRPS", 4) == 0){
-            printf("making grp\n");
-            fflush(stdout);
+            //printf("making grp\n");
+            //fflush(stdout);
             char command_name[BUFFER_SIZE], group_members[BUFFER_SIZE], group_name[BUFFER_SIZE];
             sscanf(client_msg, "%[^:]:%[^:]:%[^\n]", command_name, group_members, group_name);
             struct GroupEntry temp_grp;
@@ -316,8 +318,10 @@ void * server_logic(void *i){
                 bool valid_client = valid_client_by_name(pos);
                 if(!valid_client) {
                     valid_group = false;
-                    printf("INVALID USERS LIST\n");
-                    fflush(stdout);
+                    //printf("INVALID USERS LIST\n");
+                    //fflush(stdout);
+                    strcat(server_reply, "INVALID USERS LIST\n");
+                    send_data(server_reply, clients[pos].client_fd);
                     continue;
                 }
                 temp_grp.user_ids[temp_grp.grp_size] = clients[pos].client_fd;
