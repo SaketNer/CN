@@ -112,6 +112,15 @@ int find_client_by_name(char* name){
     }
     return -1;
 }
+int find_client_by_fd(int fd){
+    for (int i = 0; i < max_clients; i++)
+    {
+        if(clients[i].client_fd == fd){
+            return i;
+        }
+    }
+    return -1;
+}
 
 int find_group_by_name(char* name){
     for (int i = 0; i < max_clients; i++)
@@ -367,6 +376,8 @@ void * server_logic(void *i){
                 send_data(server_reply,client_fd);
             }
             for(int i =0; i <grps[pos].grp_size;i++){
+                int pos = find_client_by_fd(grps[pos].user_ids[i]);
+                if(pos == -1) continue;
                 send_data(grp_msg,grps[pos].user_ids[i]);
             }
         }
@@ -375,6 +386,7 @@ void * server_logic(void *i){
             sscanf(client_msg, "%[^:]:%[^\n]", command_name, brd_msg);
             for(int i =0; i <client_count;i++){
                 if(clients[i].client_fd==-1) continue;
+                if(clients[i].client_fd == client_fd) continue;
                 send_data(brd_msg,clients[i].client_fd);
             }
         }
