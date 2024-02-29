@@ -124,6 +124,9 @@ int find_group_by_name(char* name){
 }
 
 bool valid_client_by_name(int pos){
+    if(pos ==-1){
+        return false;
+    }
     if(clients[pos].client_fd==-1){
         return false;
     }
@@ -311,18 +314,21 @@ void * server_logic(void *i){
             strcpy(temp_grp.grp_name,group_name);
             temp_grp.grp_size= 0;
             bool valid_group = true;
+            printf("grp members: %s",group_members);
             char *members = strtok(group_members, ",");
 
-            while(members!=NULL && valid_group){
+            while(members!=NULL ){
+                printf("%s\n",members);
+                fflush(stdout);
                 int pos = find_client_by_name(members);
                 bool valid_client = valid_client_by_name(pos);
-                if(!valid_client) {
+                if(!valid_client ) {
                     valid_group = false;
-                    //printf("INVALID USERS LIST\n");
-                    //fflush(stdout);
+                    printf("INVALID USERS LIST\n");
+                    fflush(stdout);
                     strcat(server_reply, "INVALID USERS LIST\n");
-                    send_data(server_reply, clients[pos].client_fd);
-                    continue;
+                    send_data(server_reply, client_fd);
+                    break;
                 }
                 temp_grp.user_ids[temp_grp.grp_size] = clients[pos].client_fd;
                 temp_grp.grp_size++;
