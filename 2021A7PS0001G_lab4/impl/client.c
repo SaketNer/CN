@@ -42,7 +42,7 @@ void recv_data(int socket_id) {
 	memset(reply, 0, 1024);
 	if((recv_count = recv(socket_id, reply, 1024, 0)) == -1){
             //perror("recv");
-			close(socket_id);
+			 close(socket_id);
             exit(1);
     }
 	//printf("Server: %s\n", reply);

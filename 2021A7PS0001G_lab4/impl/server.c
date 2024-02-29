@@ -187,7 +187,7 @@ void server_logic(){
                 }
                 msg[strlen(msg)-1] = '\0';
                 if((send_count = send(client_id[i], msg, strlen(msg), 0)) == -1){
-                    perror("send");
+                     perror("send");
                     close(client_id[i]);
                     //close(new_server_sockfd);
                     exit(1);
