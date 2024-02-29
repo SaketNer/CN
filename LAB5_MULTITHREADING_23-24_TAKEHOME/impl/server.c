@@ -394,7 +394,8 @@ void * server_logic(void *i){
                 if(clients[i].client_fd==-1) continue;
                 if(clients[i].client_fd == client_fd) continue;
                 //printf("sending bcst");
-                send_data(brd_msg,clients[i].client_fd);
+                sprintf(server_reply, "%s:%s\n", clients[clientEntry_pos].name,brd_msg);
+                send_data(server_reply,clients[i].client_fd);
             }
         }
         else if(strcmp(client_msg, "HIST\n") == 0){
