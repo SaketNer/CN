@@ -13,11 +13,11 @@ void ser_test(unsigned char ans[], unsigned char* buffer, int size)
 
     for( int i = 0; i < 11; i++){
         if( buffer[i] != ans[i]){
-            printf("buffer[%d] = %d, ans[%d] = %d\n", i, buffer[i], i, ans[i]);
+            //printf("buffer[%d] = %d, ans[%d] = %d\n", i, buffer[i], i, ans[i]);
             printf("Serialization Test Failed\n");
             return;
         }
-        else printf("passed %d\n", i);
+        //else printf("passed %d\n", i);
     }
     printf("Serialization Test Passed\n");
 }
